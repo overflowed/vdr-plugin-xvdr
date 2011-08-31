@@ -515,7 +515,7 @@ void cLiveStreamer::sendStreamChange()
         resp->add_U32(stream->GetFpsRate());
         resp->add_U32(stream->GetHeight());
         resp->add_U32(stream->GetWidth());
-        resp->add_double(stream->GetAspect());
+        resp->add_S32((int32_t)(stream->GetAspect()*1000.0));
         DEBUGLOG("MPEG2VIDEO: %i (index: %i)", streamid, idx);
         break;
 
@@ -531,7 +531,7 @@ void cLiveStreamer::sendStreamChange()
         resp->add_U32(stream->GetFpsRate());
         resp->add_U32(stream->GetHeight());
         resp->add_U32(stream->GetWidth());
-        resp->add_double(stream->GetAspect());
+        resp->add_S32((int32_t)(stream->GetAspect()*1000.0));
         DEBUGLOG("H264: %i (index: %i)", streamid, idx);
         break;
 
@@ -788,7 +788,7 @@ void cLiveStreamer::sendStreamInfo()
         resp->add_U32(stream->GetFpsRate());
         resp->add_U32(stream->GetHeight());
         resp->add_U32(stream->GetWidth());
-        resp->add_double(stream->GetAspect());
+        resp->add_S32((int32_t)(stream->GetAspect()*1000.0));
         break;
 
       case scSUBTITLE:
