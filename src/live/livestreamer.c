@@ -440,11 +440,16 @@ void cLiveStreamer::sendStreamPacket(sStreamPacket *pkt)
   m_streamHeader.opcode   = htonl(XVDR_STREAM_MUXPKT);      // Stream packet operation code
   m_streamHeader.id       = htonl(pkt->pid);                // PID
   m_streamHeader.duration = htonl(pkt->duration);           // Duration
-
-  *(int64_t*)&m_streamHeader.dts = __cpu_to_be64(pkt->dts); // DTS
-  *(int64_t*)&m_streamHeader.pts = __cpu_to_be64(pkt->pts); // PTS
-
   m_streamHeader.length   = htonl(pkt->size);               // Data length
+
+  uint64_t dts = __cpu_to_be64(pkt->dts);
+  uint64_t pts = __cpu_to_be64(pkt->pts);
+ 
+  m_streamHeader.dts[1] = (dts & 0x00000000FFFFFFFFLL);       // DTS LOW
+  m_streamHeader.dts[0] = (dts & 0xFFFFFFFF00000000LL) >> 32; // DTS HIGH
+
+  m_streamHeader.pts[1] = (pts & 0x00000000FFFFFFFFLL);       // PTS LOW
+  m_streamHeader.pts[0] = (pts & 0xFFFFFFFF00000000LL) >> 32; // PTS HIGH
 
   // if a audio or video packet was sent, the signal is restored
   if(pkt->type > stNONE && pkt->type < stDVBSUB) {
