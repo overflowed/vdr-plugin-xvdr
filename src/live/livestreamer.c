@@ -42,7 +42,7 @@
 
 cLiveStreamer::cLiveStreamer(uint32_t timeout)
  : cThread("cLiveStreamer stream processor")
- , cRingBufferLinear(MEGABYTE(1), TS_SIZE, true)
+ , cRingBufferLinear(MEGABYTE(3), TS_SIZE, true)
  , m_scanTimeout(timeout)
 {
   m_Channel         = NULL;
