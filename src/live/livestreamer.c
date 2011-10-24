@@ -42,7 +42,7 @@
 
 cLiveStreamer::cLiveStreamer(uint32_t timeout)
  : cThread("cLiveStreamer stream processor")
- , cRingBufferLinear(MEGABYTE(3), TS_SIZE, true)
+ , cRingBufferLinear(MEGABYTE(3), TS_SIZE*2, true)
  , m_scanTimeout(timeout)
 {
   m_Channel         = NULL;
@@ -171,11 +171,18 @@ void cLiveStreamer::Action(void)
       INFOLOG("timeout. signal lost!");
       sendStatus(XVDR_STREAM_STATUS_SIGNALLOST);
       m_SignalLost = true;
+      cCamSlot* cam = m_Device->CamSlot();
+      if(cam != NULL) 
+      {
+        cam->Reset();
+      }
     }
 
     // no data
-    if (buf == NULL || size <= TS_SIZE)
+    if (buf == NULL || size <= TS_SIZE) {
+      DEBUGLOG("no data from stream");
       continue;
+    }
 
     /* Make sure we are looking at a TS packet */
     while (size > TS_SIZE)
